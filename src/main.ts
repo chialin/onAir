@@ -8,6 +8,7 @@ import {
   DatabaseReference,
 } from "firebase/database";
 import { setStatus } from "./setStatus";
+import { isError } from "./isError";
 
 // Set Firebase config
 const firebaseConfig = {
@@ -25,7 +26,6 @@ initializeApp(firebaseConfig);
 
 const database = getDatabase();
 const roundRef = ref(database, "pomoData/round");
-
 // Get pomofocus round value
 async function fetchFirstRoundData(roundRef: DatabaseReference) {
   try {
