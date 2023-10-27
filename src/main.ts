@@ -1,6 +1,12 @@
 import "./style.css";
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, onValue, get } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  onValue,
+  get,
+  DatabaseReference,
+} from "firebase/database";
 import { setStatus } from "./setStatus";
 
 // Set Firebase config
@@ -19,22 +25,29 @@ initializeApp(firebaseConfig);
 
 const database = getDatabase();
 const roundRef = ref(database, "pomoData/round");
+
 // Get pomofocus round value
-get(roundRef)
-  .then((snapshot) => {
+async function fetchFirstRoundData(roundRef: DatabaseReference) {
+  try {
+    const snapshot = await get(roundRef);
+    let round: string = "";
     if (snapshot.exists()) {
-      const round = snapshot.val();
+      round = snapshot.val();
       console.log(round);
       setStatus(round);
-    } else {
-      console.log("No data available");
     }
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+  } catch (error: unknown) {
+    if (isError(error)) {
+      throw new Error(`Fetch Error: ${error.message}.`);
+    }
+  }
+}
+
+fetchFirstRoundData(roundRef);
 
 // Listen pomofocus round change
 onValue(roundRef, (snapshot) => {
-  setStatus(snapshot.val());
+  if (snapshot.exists()) {
+    setStatus(snapshot.val());
+  }
 });
