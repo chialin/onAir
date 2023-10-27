@@ -1,8 +1,10 @@
+import { ElementNotFoundError } from "./ElementNotFoundError";
+
 export function setStatus(roundValue: string) {
   // Get HTML Element to show status
   const statusElement = document.getElementById("on-air");
   if (!statusElement) {
-    throw new Error("Cannot get DOM ID.");
+    throw new ElementNotFoundError(`Cannot find DOM ID: on-air.`);
   }
   switch (roundValue) {
     case "pomodoro":
