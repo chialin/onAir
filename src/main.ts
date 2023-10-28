@@ -33,7 +33,6 @@ async function fetchFirstRoundData(roundRef: DatabaseReference) {
     let round: string = "";
     if (snapshot.exists()) {
       round = snapshot.val();
-      console.log(round);
       setStatus(round);
     }
   } catch (error: unknown) {
