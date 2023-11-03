@@ -25,15 +25,16 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 
 const database = getDatabase();
-const roundRef = ref(database, "pomoData/round");
-// Get pomofocus round value
+const roundRef = ref(database, "pomoData");
+// Get pomofocus value
 async function fetchFirstRoundData(roundRef: DatabaseReference) {
   try {
     const snapshot = await get(roundRef);
-    let round: string = "";
+
     if (snapshot.exists()) {
-      round = snapshot.val();
-      setStatus(round);
+      const pomoData = snapshot.val();
+      console.log(pomoData);
+      setStatus(pomoData.round, pomoData.type);
     }
   } catch (error: unknown) {
     if (isError(error)) {
@@ -46,7 +47,8 @@ fetchFirstRoundData(roundRef);
 
 // Listen pomofocus round change
 onValue(roundRef, (snapshot) => {
-  if (snapshot.exists()) {
-    setStatus(snapshot.val());
+  if (snapshot.exists() && snapshot.val()) {
+    const pomoData = snapshot.val();
+    setStatus(pomoData.round, pomoData.type);
   }
 });
