@@ -24,6 +24,11 @@ const firebaseConfig = {
 // Initialize Firebase
 initializeApp(firebaseConfig);
 
+interface PomofocusData {
+  round: string;
+  type: string;
+}
+
 const database = getDatabase();
 const roundRef = ref(database, "pomoData");
 // Get pomofocus value
@@ -32,8 +37,12 @@ async function fetchFirstRoundData(roundRef: DatabaseReference) {
     const snapshot = await get(roundRef);
 
     if (snapshot.exists()) {
-      const pomoData = snapshot.val();
-      console.log(pomoData);
+      const pomoSnapshot = snapshot.val();
+      const pomoData: PomofocusData =
+        typeof pomoSnapshot === "object" && pomoSnapshot
+          ? pomoSnapshot
+          : { round: "", type: "" };
+
       setStatus(pomoData.round, pomoData.type);
     }
   } catch (error: unknown) {
@@ -48,7 +57,12 @@ fetchFirstRoundData(roundRef);
 // Listen pomofocus round change
 onValue(roundRef, (snapshot) => {
   if (snapshot.exists() && snapshot.val()) {
-    const pomoData = snapshot.val();
+    const pomoSnapshot = snapshot.val();
+    const pomoData: PomofocusData =
+      typeof pomoSnapshot === "object" && pomoSnapshot
+        ? pomoSnapshot
+        : { round: "", type: "" };
+
     setStatus(pomoData.round, pomoData.type);
   }
 });
